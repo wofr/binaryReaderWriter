@@ -1,0 +1,6 @@
+[package]
+name = "binaryReaderWriter"
+version = "0.1.0"
+authors = ["wolfgang friedl <wolfgang.friedl@hotmail.com>"]
+
+[dependencies]
