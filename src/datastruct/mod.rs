@@ -35,10 +35,52 @@ pub struct DataStruct {
     pub data_set29: Vec<u8>,
 }
 
-pub fn write_datastruct_to_file(filepath: &str, ds: &DataStruct) -> bool {
-    let f = File::open(filepath).unwrap();
-    false
+pub fn write_datastruct_to_file(filepath: &str, ds: &DataStruct) -> Result<usize,io::Error> {
+    let mut f = File::create(filepath)?;
+    let mut written_bytes = 0;
+
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set1))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set2))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set3))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set4))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set5))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set6))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set7))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set8))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set9))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set10))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set11))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set12))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set13))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set14))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set15))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set16))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set17))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set18))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set19))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set20))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set21))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set22))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set23))?;
+    written_bytes += f.write(&i32::to_le_bytes(ds.data_set24))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set25))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set26))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set27))?;
+    written_bytes += f.write(&i16::to_le_bytes(ds.data_set28))?;
+    written_bytes += f.write(ds.data_set29.as_slice())?;
+
+    // f.write(i16::to_le_bytes(ds.data_set27));
+
+    Ok(written_bytes)
 }
+
+
+/*
+fn read_bytes < R: Read,  N: usize > (f: & mut R, const size:u8) -> [u8; size]{
+    let mut bytes2 = [0u8; size];
+    f.read( & mut bytes2);
+    bytes2
+}*/
 
 pub fn read_datastruct_from_file(filepath: &str) -> Option<DataStruct> {
     let mut f = File::open(filepath).unwrap();
@@ -63,7 +105,7 @@ pub fn read_datastruct_from_file(filepath: &str) -> Option<DataStruct> {
 
    Some(DataStruct {
         data_set1:i16::from_le_bytes(read_bytes2(f.borrow_mut())),
-        data_set2:i32::from_ne_bytes(read_bytes4(f.borrow_mut())),
+        data_set2:i32::from_le_bytes(read_bytes4(f.borrow_mut())),
         data_set3:i32::from_le_bytes(read_bytes4(f.borrow_mut())),
         data_set4:i16::from_le_bytes(read_bytes2(f.borrow_mut())),
         data_set5:i16::from_le_bytes(read_bytes2(f.borrow_mut())),
@@ -142,6 +184,8 @@ mod tests {
     #[test]
     fn test_datastruct_to_file_writer() {
         let filePath = "Test.bin";
+        let occ = vec![1,2,4];
+        let occLen = occ.len();
         let bin = DataStruct {
             data_set1: 0,
             data_set2: 0,
@@ -171,8 +215,8 @@ mod tests {
             data_set26: 0,
             data_set27: 0,
             data_set28: 0,
-            data_set29: vec![],
+            data_set29: occ,
         };
-        assert_eq!(true, write_datastruct_to_file(filePath, &bin));
+        assert_eq!(76+occLen, write_datastruct_to_file(filePath, &bin).unwrap());
     }
 }
